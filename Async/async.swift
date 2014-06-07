@@ -78,3 +78,11 @@ class Async<T> {
         return self
     }
 }
+
+let x = Async.map([1, 2, 3], iterator: { (n, next) in
+    someAsyncFunction(n) { (result) in
+        next(result)
+    }
+}, callback: { (result) in
+    // do something with results
+})

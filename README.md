@@ -14,9 +14,11 @@ Usage
 -----
 
 ```swift
-Async.map([1, 2, 3]) { (n, next) in
+Async.map([1, 2, 3], iterator: { (n, next) in
   someAsyncFunction(n) { (result) in
 	  next(result)
 	}
-}
+}, callback: { (results) in
+  // do something with results
+})
 ```
