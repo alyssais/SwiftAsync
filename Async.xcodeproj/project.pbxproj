@@ -10,6 +10,7 @@
 		A75128B619438BC6002ED41A /* Async.h in Headers */ = {isa = PBXBuildFile; fileRef = A75128B519438BC6002ED41A /* Async.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A75128BC19438BC6002ED41A /* Async.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A75128B019438BC6002ED41A /* Async.framework */; };
 		A75128C319438BC6002ED41A /* AsyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75128C219438BC6002ED41A /* AsyncTests.swift */; };
+		A75128CD19438BD4002ED41A /* async.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75128CC19438BD4002ED41A /* async.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +30,7 @@
 		A75128BB19438BC6002ED41A /* AsyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AsyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A75128C119438BC6002ED41A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A75128C219438BC6002ED41A /* AsyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTests.swift; sourceTree = "<group>"; };
+		A75128CC19438BD4002ED41A /* async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = async.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				A75128B519438BC6002ED41A /* Async.h */,
+				A75128CC19438BD4002ED41A /* async.swift */,
 				A75128B319438BC6002ED41A /* Supporting Files */,
 			);
 			path = Async;
@@ -210,6 +213,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A75128CD19438BD4002ED41A /* async.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +320,7 @@
 		A75128C719438BC6002ED41A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -327,12 +332,14 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
 		A75128C819438BC6002ED41A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -400,6 +407,7 @@
 				A75128C819438BC6002ED41A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		A75128C919438BC6002ED41A /* Build configuration list for PBXNativeTarget "AsyncTests" */ = {
 			isa = XCConfigurationList;
@@ -408,6 +416,7 @@
 				A75128CB19438BC6002ED41A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
