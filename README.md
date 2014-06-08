@@ -24,7 +24,7 @@ Usage
 -----
 
 ```swift
-Async.map([1, 2, 3], iterator: { (n, next) in
+Async.map([1, 2, 3], { (n, next) in
 	someAsyncFunction(n) { (result) in
 		next(result)
 	}
