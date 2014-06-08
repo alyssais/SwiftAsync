@@ -25,6 +25,9 @@ Currently, the following functions are implemented:
 * `some`
 * `someSeries`
 * `some limit:`
+* `every`
+* `everySeries`
+* `every limit:`
 
 Usage
 -----

@@ -259,4 +259,30 @@ class Async<T> {
     func some(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
         return some(limit: value.count, iterator, callback: callback)
     }
+
+    // every
+
+    class func every(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).every(limit: limit, iterator, callback: callback).value
+    }
+
+    func every(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return map(limit: limit, iterator) { callback($0.reduce(true, combine: &)) }
+    }
+
+    class func everySeries(array: T[], iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).everySeries(iterator, callback: callback).value
+    }
+
+    func everySeries(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return every(limit: 1, iterator, callback: callback)
+    }
+
+    class func every(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).every(iterator, callback: callback).value
+    }
+
+    func every(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return every(limit: 1, iterator, callback: callback)
+    }
 }
