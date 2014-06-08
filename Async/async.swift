@@ -167,4 +167,30 @@ class Async<T> {
     func rejectSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
         return reject(limit: 1, iterator, callback: callback);
     }
+
+    // reduce
+
+    class func reduce<Result>(array: T[], _ accumulator: Result, _ iterator: (Result, T, (Result) -> ()) -> (), callback: (Result) -> ()) -> T[] {
+        return self(array).reduce(accumulator, iterator, callback: callback).value
+    }
+
+    func reduce<Result>(var accumulator: Result, _ iterator: (Result, T, (Result) -> ()) -> (), callback: (Result) -> ()) -> Async<T> {
+        return eachSeries({ (elem, next) in
+            iterator(accumulator, elem) { (result) in
+                accumulator = result
+                next()
+            }
+        }, { callback(accumulator) })
+    }
+
+    // reduceRight
+
+    class func reduceRight<Result>(array: T[], _ accumulator: Result, _ iterator: (Result, T, (Result) -> ()) -> (), callback: (Result) -> ()) -> T[] {
+        return self(array).reduceRight(accumulator, iterator, callback: callback).value
+    }
+
+    func reduceRight<Result>(accumulator: Result, _ iterator: (Result, T, (Result) -> ()) -> (), callback: (Result) -> ()) -> Async<T> {
+        Async.reduce(value.reverse(), accumulator, iterator, callback: callback)
+        return self
+    }
 }

@@ -17,6 +17,8 @@ Currently, the following functions are implemented:
 * `reject`
 * `rejectSeries`
 * `reject limit:`
+* `reduce`
+* `reduceRight`
 
 Usage
 -----
