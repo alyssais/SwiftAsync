@@ -285,4 +285,36 @@ class Async<T> {
     func every(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
         return every(limit: 1, iterator, callback: callback)
     }
+
+    // concat
+
+    class func concat<Result>(array: T[], limit: Int, _ iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
+        return self(array).concat(limit: limit, iterator, callback: callback).value
+    }
+
+    func concat<Result>(#limit: Int, _ iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
+        var results = Result[]()
+        return each(limit: limit, { (elem, next) in
+            iterator(elem) { (iteratorResults) in
+                results += iteratorResults
+                next()
+            }
+        }, callback: { callback(results) })
+    }
+
+    class func concatSeries<Result>(array: T[],  _ iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
+        return self(array).concat(iterator, callback: callback).value
+    }
+
+    func concatSeries<Result>(iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
+        return concat(limit: 1, iterator, callback: callback)
+    }
+
+    class func concat<Result>(array: T[], _ iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
+        return self(array).concat(iterator, callback: callback).value
+    }
+
+    func concat<Result>(iterator: (T, (Result[]) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
+        return concat(limit: value.count, iterator, callback: callback)
+    }
 }

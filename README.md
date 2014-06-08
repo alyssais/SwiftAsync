@@ -28,6 +28,9 @@ Currently, the following functions are implemented:
 * `every`
 * `everySeries`
 * `every limit:`
+* `concat`
+* `concatSeries`
+* `concat limit:`
 
 Usage
 -----
