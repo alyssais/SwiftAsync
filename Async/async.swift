@@ -13,11 +13,11 @@ class Async<T> {
         value = contents
     }
     
-    class func map<Result>(array: T[], limit: Int, _ iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> T[] {
+    class func map<Result>(array: T[], limit: Int, _ iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
         return self(array).map(limit: limit, iterator, callback: callback).value
     }
     
-    func map<Result>(#limit: Int, _ iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> Async<T> {
+    func map<Result>(#limit: Int, _ iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
         let totalCount = value.count
         var results = Dictionary<Int, Result>(minimumCapacity: totalCount)
         var runningCount = 0
@@ -43,7 +43,7 @@ class Async<T> {
                         resultsArray.append(results[j]!)
                     }
                     
-                    callback?(resultsArray)
+                    callback(resultsArray)
                 } else if i < totalCount {
                     runNextFix()
                 }
@@ -59,19 +59,19 @@ class Async<T> {
         return self
     }
     
-    class func mapSeries<Result>(array: T[], _ iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> T[] {
+    class func mapSeries<Result>(array: T[], _ iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
         return self(array).mapSeries(iterator, callback: callback).value
     }
     
-    func mapSeries<Result>(iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> Async<T> {
+    func mapSeries<Result>(iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
         return map(limit: 1, iterator, callback: callback)
     }
     
-    class func map<Result>(array: T[], _ iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> T[] {
+    class func map<Result>(array: T[], _ iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
         return self(array).map(iterator, callback: callback).value
     }
     
-    func map<Result>(iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> Async<T> {
+    func map<Result>(iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> Async<T> {
         return map(limit: value.count, iterator, callback: callback)
     }
 
