@@ -67,16 +67,6 @@ class Async<T> {
         return map(limit: 1, iterator: iterator, callback: callback)
     }
     
-    class func eachSeries(array: T[], iterator: (T, () -> ()) -> (), callback: (() -> ()) = {}) -> T[] {
-        return self(array).eachSeries(iterator, callback: callback).value
-    }
-    
-    func eachSeries(iterator: (T, () -> ()) -> (), callback: (() -> ()) = {}) -> Async<T> {
-        return mapSeries({ (elem, callback) in
-            iterator(elem) { callback(nil) }
-        }, callback: { (results) in callback() })
-    }
-    
     class func map<Result>(array: T[], iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> T[] {
         return self(array).map(iterator, callback: callback).value
     }
@@ -84,14 +74,33 @@ class Async<T> {
     func map<Result>(iterator: (T, (Result) -> ()) -> (), callback: ((Result[]) -> ())?) -> Async<T> {
         return map(limit: value.count, iterator: iterator, callback: callback)
     }
-    
-    class func each(array: T[], iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> T[] {
+
+    class func each(array: T[], limit: Int, iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
+        return self(array).each(limit: limit, iterator: iterator, callback: callback).value
+    }
+
+    func each(#limit: Int, iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+        return map(limit: limit, iterator: { (elem, next) in
+            iterator(elem) { next() }
+        }, callback: { (results) in
+            callback?()
+            return
+        })
+    }
+
+    class func eachSeries(array: T[], iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
+        return self(array).eachSeries(iterator, callback: callback).value
+    }
+
+    func eachSeries(iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+        return each(limit: 1, iterator: iterator, callback: callback)
+    }
+
+    class func each(array: T[], iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
         return self(array).each(iterator, callback: callback).value
     }
-    
-    func each(iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> Async<T> {
-        return map({ (elem, callback) in
-            iterator(elem) { callback(nil) }
-        }, callback: { (results) in callback() })
+
+    func each(iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+        return each(limit: value.count, iterator: iterator, callback: callback)
     }
 }

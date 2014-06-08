@@ -9,6 +9,7 @@ Currently, the following functions are implemented:
 * `map`
 * `eachSeries`
 * `mapSeries`
+* `each(limit:)`
 * `map(limit:)`
 
 Usage
