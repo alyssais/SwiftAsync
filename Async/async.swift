@@ -233,4 +233,30 @@ class Async<T> {
     }
 
     // TODO: sortBy
+
+    // some
+
+    class func some(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).some(limit: limit, iterator, callback: callback).value
+    }
+
+    func some(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return detect(limit: limit, iterator) { callback($0 != nil) }
+    }
+
+    class func someSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).someSeries(iterator, callback: callback).value
+    }
+
+    func someSeries(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return some(limit: 1, iterator, callback: callback)
+    }
+
+    class func some(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> T[] {
+        return self(array).some(iterator, callback: callback).value
+    }
+
+    func some(iterator: (T, (Bool) -> ()) -> (), callback: (Bool) -> ()) -> Async<T> {
+        return some(limit: value.count, iterator, callback: callback)
+    }
 }

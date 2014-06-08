@@ -22,6 +22,9 @@ Currently, the following functions are implemented:
 * `detect`
 * `detectSeries`
 * `detect limit:`
+* `some`
+* `someSeries`
+* `some limit:`
 
 Usage
 -----
