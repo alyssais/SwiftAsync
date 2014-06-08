@@ -6,11 +6,17 @@ This is a port of [async](https://github.com/caolan/async) to the Swift programm
 Currently, the following functions are implemented:
 
 * `each`
-* `map`
 * `eachSeries`
+* `each limit:`
+* `map`
 * `mapSeries`
-* `each(limit:)`
-* `map(limit:)`
+* `map limit:`
+* `filter`
+* `filterSeries`
+* `filter limit:`
+* `reject`
+* `rejectSeries`
+* `reject limit:`
 
 Usage
 -----

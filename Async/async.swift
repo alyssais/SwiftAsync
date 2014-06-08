@@ -12,6 +12,8 @@ class Async<T> {
     @required init(_ contents: T[]) {
         value = contents
     }
+
+    // map
     
     class func map<Result>(array: T[], limit: Int, _ iterator: (T, (Result) -> ()) -> (), callback: (Result[]) -> ()) -> T[] {
         return self(array).map(limit: limit, iterator, callback: callback).value
@@ -75,6 +77,8 @@ class Async<T> {
         return map(limit: value.count, iterator, callback: callback)
     }
 
+    // each
+
     class func each(array: T[], limit: Int, _ iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
         return self(array).each(limit: limit, iterator, callback: callback).value
     }
@@ -102,5 +106,65 @@ class Async<T> {
 
     func each(iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
         return each(limit: value.count, iterator, callback: callback)
+    }
+
+    // filter
+
+    class func filter(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).filter(limit: limit, iterator, callback: callback).value
+    }
+
+    func filter(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return map(limit: limit, iterator) { (bools) in
+            var results = T[]()
+            for (i, elem) in enumerate(self.value) {
+                if bools[i] {
+                    results.append(elem)
+                }
+            }
+            callback(results)
+        }
+    }
+
+    class func filter(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).filter(iterator, callback: callback).value
+    }
+
+    func filter(iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return filter(limit: value.count, iterator, callback: callback);
+    }
+
+    class func filterSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).filter(iterator, callback: callback).value
+    }
+
+    func filterSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return filter(limit: 1, iterator, callback: callback);
+    }
+
+    // reject
+
+    class func reject(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).reject(limit: limit, iterator, callback: callback).value
+    }
+
+    func reject(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return filter(limit: limit, { (elem, next) in iterator(elem) { next(!$0) } }, callback: callback)
+    }
+
+    class func reject(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).reject(iterator, callback: callback).value
+    }
+
+    func reject(iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return reject(limit: value.count, iterator, callback: callback);
+    }
+
+    class func rejectSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).reject(iterator, callback: callback).value
+    }
+
+    func rejectSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return reject(limit: 1, iterator, callback: callback);
     }
 }
