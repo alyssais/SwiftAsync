@@ -79,32 +79,32 @@ class Async<T> {
 
     // each
 
-    class func each(array: T[], limit: Int, _ iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
+    class func each(array: T[], limit: Int, _ iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> T[] {
         return self(array).each(limit: limit, iterator, callback: callback).value
     }
 
-    func each(#limit: Int, _ iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+    func each(#limit: Int, _ iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> Async<T> {
         return map(limit: limit, { (elem, next) in
             iterator(elem) { next() }
         }, callback: { (results) in
-            callback?()
+            callback()
             return
         })
     }
 
-    class func eachSeries(array: T[], _ iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
+    class func eachSeries(array: T[], _ iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> T[] {
         return self(array).eachSeries(iterator, callback: callback).value
     }
 
-    func eachSeries(iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+    func eachSeries(iterator: (T, () -> ()) -> (), callback: () -> () = {}) -> Async<T> {
         return each(limit: 1, iterator, callback: callback)
     }
 
-    class func each(array: T[], _ iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> T[] {
+    class func each(array: T[], _ iterator: (T, () -> ()) -> (), callback: () -> ()) -> T[] {
         return self(array).each(iterator, callback: callback).value
     }
 
-    func each(iterator: (T, () -> ()) -> (), callback: (() -> ())?) -> Async<T> {
+    func each(iterator: (T, () -> ()) -> (), callback: () -> ()) -> Async<T> {
         return each(limit: value.count, iterator, callback: callback)
     }
 
@@ -192,5 +192,40 @@ class Async<T> {
     func reduceRight<Result>(accumulator: Result, _ iterator: (Result, T, (Result) -> ()) -> (), callback: (Result) -> ()) -> Async<T> {
         Async.reduce(value.reverse(), accumulator, iterator, callback: callback)
         return self
+    }
+
+    // detect
+
+    class func detect(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+        return self(array).detect(limit: limit, iterator, callback: callback).value
+    }
+
+    func detect(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+        var completed = false
+        return each(limit: limit) { (elem, next) in
+            iterator(elem) { (result) in
+                next()
+                if result && !completed {
+                    completed = true
+                    callback(elem)
+                }
+            }
+        }
+    }
+
+    class func detectSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+        return self(array).detectSeries(iterator, callback: callback).value
+    }
+
+    func detectSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+        return detect(limit: 1, iterator, callback: callback)
+    }
+
+    class func detect(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+        return self(array).detect(iterator, callback: callback).value
+    }
+
+    func detect(iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+        return detect(limit: value.count, iterator, callback: callback)
     }
 }

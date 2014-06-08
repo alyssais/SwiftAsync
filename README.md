@@ -19,6 +19,9 @@ Currently, the following functions are implemented:
 * `reject limit:`
 * `reduce`
 * `reduceRight`
+* `detect`
+* `detectSeries`
+* `detect limit:`
 
 Usage
 -----
