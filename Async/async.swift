@@ -25,7 +25,11 @@ class Async<T> {
         var runningCount = 0
         var completeCount = 0
         var i = 0
-        
+
+        /*
+         * work around a tail recursion bug in the Swift compiler
+         * where a function or closure inside a function cannot call itself
+         */
         var runNextFix: () -> () = {}
         func runNext() {
             let index = i++
