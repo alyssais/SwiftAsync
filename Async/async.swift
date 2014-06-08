@@ -236,7 +236,36 @@ class Async<T> {
         return detect(limit: value.count, iterator, callback: callback)
     }
 
-    // TODO: sortBy
+    // sortBy
+
+    class func sortBy(array: T[], limit: Int, _ iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).sortBy(limit: limit, iterator, callback: callback).value
+    }
+
+    func sortBy(#limit: Int, _ iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return map(limit: limit, { (elem, next: ((Int, T)) -> ()) in
+            iterator(elem) { (result) in next((result, elem)) }
+        }, callback: { (results) in
+            results.sort { $0.0 < $1.0 }
+            callback(results.map { $0.1 })
+        })
+    }
+
+    class func sortBySeries(array: T[], _ iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).sortBySeries(iterator, callback: callback).value
+    }
+
+    func sortBySeries(iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return sortBy(limit: 1, iterator, callback: callback)
+    }
+
+    class func sortBy(array: T[], _ iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> T[] {
+        return self(array).sortBy(iterator, callback: callback).value
+    }
+
+    func sortBy(iterator: (T, (Int) -> ()) -> (), callback: (T[]) -> ()) -> Async<T> {
+        return sortBy(iterator, callback: callback)
+    }
 
     // some
 
