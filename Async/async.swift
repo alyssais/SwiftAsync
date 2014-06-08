@@ -196,36 +196,39 @@ class Async<T> {
 
     // detect
 
-    class func detect(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+    class func detect(array: T[], limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> T[] {
         return self(array).detect(limit: limit, iterator, callback: callback).value
     }
 
-    func detect(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+    func detect(#limit: Int, _ iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> Async<T> {
         var completed = false
-        return each(limit: limit) { (elem, next) in
-            iterator(elem) { (result) in
-                next()
-                if result && !completed {
-                    completed = true
-                    callback(elem)
-                }
+        func complete(elem: T?) {
+            if !completed {
+                completed = true
+                callback(elem)
             }
         }
+        return each(limit: limit, { (elem, next) in
+            iterator(elem) { (result) in
+                next()
+                if result { complete(elem) }
+            }
+        }, { complete(nil) })
     }
 
-    class func detectSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+    class func detectSeries(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> T[] {
         return self(array).detectSeries(iterator, callback: callback).value
     }
 
-    func detectSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+    func detectSeries(iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> Async<T> {
         return detect(limit: 1, iterator, callback: callback)
     }
 
-    class func detect(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> T[] {
+    class func detect(array: T[], _ iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> T[] {
         return self(array).detect(iterator, callback: callback).value
     }
 
-    func detect(iterator: (T, (Bool) -> ()) -> (), callback: (T) -> ()) -> Async<T> {
+    func detect(iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> Async<T> {
         return detect(limit: value.count, iterator, callback: callback)
     }
 }
