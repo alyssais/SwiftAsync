@@ -231,4 +231,6 @@ class Async<T> {
     func detect(iterator: (T, (Bool) -> ()) -> (), callback: (T?) -> ()) -> Async<T> {
         return detect(limit: value.count, iterator, callback: callback)
     }
+
+    // TODO: sortBy
 }
